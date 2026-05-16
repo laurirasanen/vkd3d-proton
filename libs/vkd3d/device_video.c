@@ -20,6 +20,8 @@
 
 #include "vkd3d_private.h"
 
+
+
 static inline struct d3d12_device *d3d12_device_from_ID3D12VideoDevice(d3d12_video_device_iface *iface)
 {
     return CONTAINING_RECORD(iface, struct d3d12_device, ID3D12VideoDevice_iface);
@@ -51,8 +53,85 @@ static ULONG STDMETHODCALLTYPE d3d12_video_device_Release(d3d12_video_device_ifa
 static HRESULT STDMETHODCALLTYPE d3d12_video_device_CheckFeatureSupport(d3d12_video_device_iface *iface,
         D3D12_FEATURE_VIDEO feature, void *feature_data, UINT feature_data_size)
 {
-    FIXME("iface %p, feature %d, feature_data %p, feature_data_size %zu stub!\n", iface, feature, feature_data, feature_data_size);
-    return E_NOTIMPL;
+    struct d3d12_device *device = d3d12_device_from_ID3D12VideoDevice(iface);
+    struct vkd3d_vulkan_info *vulkan_info = &device->vk_info;
+    VkInstance *vk_instance = device->vkd3d_instance->vk_instance;
+    VkPhysicalDevice *vk_physical_device = device->vk_physical_device;
+    VkDevice *vk_device = device->vk_device;
+
+    VkResult vr;
+
+    if (!vulkan_info->KHR_video_queue)
+    {
+        WARN("Video queue not supported.\n");
+        return E_INVALIDARG;
+    }
+
+    switch (feature)
+    {
+        case D3D12_FEATURE_VIDEO_DECODE_SUPPORT:
+        {
+            D3D12_FEATURE_DATA_VIDEO_DECODE_SUPPORT *data = feature_data;
+
+            VkVideoProfileInfoKHR vk_video_profile = {0};
+            VkVideoCapabilitiesKHR vk_video_caps = {0};
+            VkVideoDecodeCapabilitiesKHR vk_video_decode_caps = {0};
+            VkVideoDecodeH264CapabilitiesKHR vk_video_decode_h264_caps = {0};
+
+            vk_video_profile.sType = VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR;
+            vk_video_caps.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
+            vk_video_decode_caps.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+            vk_video_decode_h264_caps.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
+
+            if (!vulkan_info->KHR_video_decode_queue)
+            {
+                WARN("Video decode queue not supported.\n");
+                return E_INVALIDARG;
+            }
+
+            if (feature_data_size != sizeof(*data))
+            {
+                WARN("Invalid size %u.\n", feature_data_size);
+                return E_INVALIDARG;
+            }
+
+            if (data->NodeIndex)
+            {
+                FIXME("Multi-adapter not supported.\n");
+                return E_INVALIDARG;
+            }
+
+            vk_video_caps.pNext = &vk_video_decode_caps;
+
+            if (IsEqualGUID(data->Configuration.Profile, D3D12_VIDEO_DECODE_PROFILE_H264))
+            {
+                vk_video_decode_caps.pNext = &vk_video_decode_h264_caps;
+            }
+            else
+            {
+                FIXME("Unhandled video decode profile %s.\n", debugstr_guid(data->Configuration.Profile))
+                return E_INVALIDARG;
+            }
+
+            if ((vr = VK_CALL(vkGetPhysicalDeviceVideoCapabilitiesKHR(*vk_physical_device, &vk_video_profile, &vk_video_caps) < 0)
+            {
+                ERR("Failed to query video device capabilities, vr %d\n.", vr);
+                return E_INVALIDARG;
+            }
+
+            FIXME("Video decode support assumed.\n"); // TODO actually query stuff
+            data->SupportFlags = D3D12_VIDEO_DECODE_SUPPORT_FLAG_SUPPORTED;
+            data->ConfigurationFlags = D3D12_VIDEO_DECODE_CONFIGURATION_FLAG_NONE;
+
+            return S_OK;
+        }
+
+        default:
+        {
+            FIXME("Unhandled feature %d.\n", feature);
+            return E_NOTIMPL;
+        }
+    }
 }
 
 static HRESULT STDMETHODCALLTYPE d3d12_video_device_CreateVideoDecoder(d3d12_video_device_iface *iface,

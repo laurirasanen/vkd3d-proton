@@ -156,6 +156,8 @@ struct vkd3d_vulkan_info
     bool KHR_unified_image_layouts;
     bool KHR_present_mode_fifo_latest_ready;
     bool KHR_device_address_commands;
+    bool KHR_video_queue;
+    bool KHR_video_decode_queue;
     /* EXT device extensions */
     bool EXT_conditional_rendering;
     bool EXT_conservative_rasterization;

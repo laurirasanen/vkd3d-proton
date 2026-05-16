@@ -95,6 +95,8 @@ static const struct vkd3d_optional_extension_info optional_device_extensions[] =
     VK_EXTENSION(KHR_PRESENT_WAIT_2, KHR_present_wait2),
     VK_EXTENSION(EXT_PRESENT_TIMING, EXT_present_timing),
     VK_EXTENSION(KHR_DEVICE_ADDRESS_COMMANDS, KHR_device_address_commands),
+    VK_EXTENSION(KHR_VIDEO_QUEUE, KHR_video_queue),
+    VK_EXTENSION(KHR_VIDEO_DECODE_QUEUE, KHR_video_decode_queue),
 #ifdef _WIN32
     VK_EXTENSION(KHR_EXTERNAL_MEMORY_WIN32, KHR_external_memory_win32),
     VK_EXTENSION(KHR_EXTERNAL_SEMAPHORE_WIN32, KHR_external_semaphore_win32),

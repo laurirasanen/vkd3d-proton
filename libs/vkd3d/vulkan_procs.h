@@ -254,6 +254,23 @@ VK_DEVICE_EXT_PFN(vkCmdUpdateMemoryKHR)
 VK_DEVICE_EXT_PFN(vkCmdWriteMarkerToMemoryAMD)
 VK_DEVICE_EXT_PFN(vkCreateAccelerationStructure2KHR)
 
+/* VK_KHR_video_queue */
+VK_DEVICE_EXT_PFN(vkBindVideoSessionMemoryKHR)
+VK_DEVICE_EXT_PFN(vkCmdBeginVideoCodingKHR)
+VK_DEVICE_EXT_PFN(vkCmdControlVideoCodingKHR)
+VK_DEVICE_EXT_PFN(vkCmdEndVideoCodingKHR)
+VK_DEVICE_EXT_PFN(vkCreateVideoSessionKHR)
+VK_DEVICE_EXT_PFN(vkCreateVideoSessionParametersKHR)
+VK_DEVICE_EXT_PFN(vkDestroyVideoSessionKHR)
+VK_DEVICE_EXT_PFN(vkDestroyVideoSessionParametersKHR)
+VK_DEVICE_EXT_PFN(vkGetPhysicalDeviceVideoCapabilitiesKHR)
+VK_DEVICE_EXT_PFN(vkGetPhysicalDeviceVideoFormatPropertiesKHR)
+VK_DEVICE_EXT_PFN(vkGetVideoSessionMemoryRequirementsKHR)
+VK_DEVICE_EXT_PFN(vkUpdateVideoSessionParametersKHR)
+
+/* VK_KHR_video_decode_queue */
+VK_DEVICE_EXT_PFN(vkCmdDecodeVideoKHR)
+
 #ifdef VK_KHR_external_memory_win32
 /* VK_KHR_external_memory_win32 */
 VK_DEVICE_EXT_PFN(vkGetMemoryWin32HandleKHR)
