@@ -158,6 +158,7 @@ struct vkd3d_vulkan_info
     bool KHR_device_address_commands;
     bool KHR_video_queue;
     bool KHR_video_decode_queue;
+    bool KHR_video_decode_h264;
     /* EXT device extensions */
     bool EXT_conditional_rendering;
     bool EXT_conservative_rasterization;
